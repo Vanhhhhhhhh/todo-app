@@ -1,35 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todo, setTodo] = useState({
+    id: "",
+    name: "",
+  });
+  const [todoList, setTodoList] = useState([
+    {
+      id: "",
+      name: "",
+    },
+  ]);
+
+  const handleGetTodo = (value) => {
+    const randomId = Math.floor(Math.random(1000) * 10000);
+
+    const todo = {
+      id: randomId,
+      name: value,
+    };
+
+    setTodo(todo);
+  };
+
+  const handleSubmit = () => {
+    setTodoList((prev) => {
+      return [...prev, todo].filter((todo) => todo && todo.name.trim() !== "");
+    });
+
+    setTodo({
+      id: "",
+      name: "",
+    });
+  };
+
+  const handleDelete = (id) => {
+    console.log(id + " was deleted");
+    setTodoList(todoList.filter((todo) => todo && todo.id !== id));
+  };
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input
+          type="text"
+          onChange={(e) => handleGetTodo(e.target.value)}
+          value={todo.name}
+        />
+        <button onClick={handleSubmit}>Add</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+
+      <div>
+        <ul>
+          {todoList
+            .filter((todo) => todo && todo.name.trim() !== "")
+            .map((todo, index) => {
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "30px",
+                  }}
+                  key={index}
+                >
+                  <li>{todo.name}</li>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      color: "red",
+                    }}
+                    onClick={() => handleDelete(todo.id)}
+                  >
+                    X
+                  </div>
+                </div>
+              );
+            })}
+        </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
